@@ -15,7 +15,9 @@
     "body-parser": "^1.20.3",
     "express": "^4.21.0",
     "firebase": "^10.13.1",
-    "nodemon": "^3.1.5"
+    "nodemon": "^3.1.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^5.0.2"
