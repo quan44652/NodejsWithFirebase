@@ -1,6 +1,5 @@
 import { firestore } from "../db.js";
 import {
-  getFirestore,
   collection,
   addDoc,
   updateDoc,
@@ -12,41 +11,41 @@ import {
 
 const getAll = async (req, res) => {
   try {
-    const resp = await getDocs(collection(firestore, "tasks"));
+    const docSnap = await getDocs(collection(firestore, "tasks"));
     const data = [];
-    resp.forEach((doc) => {
+    docSnap.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() });
     });
-    res.status(201).json({ message: "Task getAll successfully", data });
+    res.status(200).json({ message: "Task getAll successfully", data });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getOne = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log("id", id);
-
     const docRef = doc(firestore, "tasks", id);
-    const resp = await getDoc(docRef);
-    if (!resp.exists()) {
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
       return res.status(404).json({ message: "Task not found" });
     }
-    return res.status(201).json({ message: "Task get successfully", resp });
+    return res
+      .status(200)
+      .json({ message: "Task get successfully", data: docSnap.data() });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 const create = async (req, res) => {
   try {
-    const resp = await addDoc(collection(firestore, "tasks"), req.body);
+    const docSnap = await addDoc(collection(firestore, "tasks"), req.body);
     return res
       .status(200)
-      .json({ message: "Task created successfully", id: resp.id });
+      .json({ message: "Task created successfully", id: docSnap.id });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -54,15 +53,16 @@ const update = async (req, res) => {
   try {
     const id = req.params.id;
     const docRef = doc(firestore, "tasks", id);
-    const resp = await updateDoc(docRef, req.body);
-    if (resp.exists()) {
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
       return res.status(404).json({ message: "Task not found" });
     }
-    return req
-      .status(200)
-      .json({ message: "Task updated successfully", id: resp.id });
+
+    await updateDoc(docRef, req.body);
+    return res.status(200).json({ message: "Task updated successfully", id });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -70,10 +70,15 @@ const remove = async (req, res) => {
   try {
     const id = req.params.id;
     const docRef = doc(firestore, "tasks", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return res.status(404).json({ message: "Task not found" });
+    }
     await deleteDoc(docRef);
     return res.status(200).json({ message: "Task deleted successfully", id });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 };
 
