@@ -1,0 +1,23 @@
+{
+  "name": "nodejswithfirebase",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
+    "firebase": "^10.13.1",
+    "nodemon": "^3.1.5"
+  },
+  "devDependencies": {
+    "babel-plugin-module-resolver": "^5.0.2"
+  }
+}
